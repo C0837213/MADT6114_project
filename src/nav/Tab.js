@@ -1,16 +1,40 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Home from "../screens/Home";
-import History from "../screens/History";
-import Cat from "../screens/Cat";
-
 import { Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useTheme } from "native-base";
+import { Text } from "native-base";
+import { Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
+import Cat from "../screens/Cat";
+import History from "../screens/History";
+import Home from "../screens/Home";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTab = () => {
+  const { colors } = useTheme();
+  const navigation = useNavigation();
+  const handleLogout = () => {
+    navigation.navigate("AuthStack");
+  };
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        headerRight: () => {
+          return (
+            <Pressable
+              style={{ paddingRight: 16 }}
+              onPress={() => handleLogout()}
+            >
+              <Ionicons
+                name="log-out-outline"
+                size={24}
+                color={colors.primary["500"]}
+              />
+            </Pressable>
+          );
+        },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -27,7 +51,7 @@ const BottomTab = () => {
           // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "tomato",
+        tabBarActiveTintColor: colors.primary["500"],
         tabBarInactiveTintColor: "gray",
       })}
     >

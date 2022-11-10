@@ -11,7 +11,7 @@ const RootStack = () => {
       screenOptions={{ headerShown: false, gestureEnabled: false }}
       initialRouteName="Auth"
     >
-      <Stack.Screen name="Auth" component={AuthStack} />
+      <Stack.Screen name="AuthStack" component={AuthStack} />
       <Stack.Screen name="HomeStack" component={BottomTab} />
     </Stack.Navigator>
   );
