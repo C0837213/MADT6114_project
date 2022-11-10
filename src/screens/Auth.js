@@ -2,6 +2,11 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Box, Button, HStack, VStack, Stack, Input, Radio } from "native-base";
 import { useNavigation } from "@react-navigation/native";
+import {
+  getData,
+  storeUserData,
+  USER_DATA_KEY,
+} from "../services/asyncStorage";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = React.useState(true);
@@ -9,7 +14,7 @@ const Auth = () => {
   const [password, setPassword] = React.useState("");
   const [rePass, setRePass] = React.useState("");
   const navigation = useNavigation();
-  const [isUser, setIsUser] = React.useState("");
+  const [type, setType] = React.useState("");
 
   const resetScreen = () => {
     setIsLogin(true);
@@ -27,8 +32,48 @@ const Auth = () => {
     return unsubscribe;
   }, [navigation]);
 
-  const handleLogin = () => {
-    navigation.navigate("HomeStack");
+  const handleLogin = async () => {
+    if (password && username) {
+      const currUsers = await getData(USER_DATA_KEY);
+      let user;
+      if (Array.isArray(currUsers)) {
+        user = currUsers.find((item) => item.username === username);
+      }
+      if (user && password === user.password) {
+        navigation.navigate("HomeStack");
+      } else {
+        alert("Password is incorrect");
+      }
+    } else {
+      alert("Please fill in the form");
+    }
+  };
+
+  const handleRegister = async () => {
+    if (password === rePass && username) {
+      //check existing name
+      let valid = true;
+      const currentUsers = await getData(USER_DATA_KEY);
+      if (Array.isArray(currentUsers)) {
+        currentUsers.forEach((user) => {
+          if (user.username === username) {
+            valid = false;
+          }
+        });
+      }
+      if (valid) {
+        const user = {
+          username,
+          password,
+          type,
+        };
+        await storeUserData();
+      } else {
+        alert("Username have been used.");
+      }
+    } else {
+      alert("Please fill in the form.");
+    }
   };
 
   return (
@@ -36,22 +81,53 @@ const Auth = () => {
       <Stack space={4} w="75%">
         {isLogin ? (
           <>
-            <Input size="md" placeholder="username" />
-            <Input size="md" placeholder="password" />
+            <Input
+              size="md"
+              placeholder="username"
+              onChangeText={setUsername}
+            />
+            <Input
+              size="md"
+              placeholder="password"
+              type="password"
+              onChange={setPassword}
+            />
             <HStack space={4} justifyContent="center">
               <Button onPress={() => handleLogin()}>Login</Button>
-              <Button onPress={() => setIsLogin(false)}>Register</Button>
+              <Button
+                onPress={() => {
+                  setIsLogin(false);
+                  setPassword("");
+                  setRePass("");
+                  setUsername("");
+                }}
+              >
+                Register
+              </Button>
             </HStack>
           </>
         ) : (
           <>
-            <Input size="md" placeholder="username" />
-            <Input size="md" placeholder="password" />
-            <Input size="md" placeholder="reenter password" />
+            <Input
+              size="md"
+              placeholder="username"
+              onChangeText={setUsername}
+            />
+            <Input
+              size="md"
+              placeholder="password"
+              type="password"
+              onChangeText={setPassword}
+            />
+            <Input
+              size="md"
+              placeholder="reenter password"
+              onChangeText={setRePass}
+            />
             <Radio.Group
-              value={isUser}
+              value={type}
               onChange={(nextValue) => {
-                setIsUser(nextValue);
+                setType(nextValue);
               }}
             >
               <HStack space={4}>
@@ -64,7 +140,16 @@ const Auth = () => {
               </HStack>
             </Radio.Group>
             <HStack space={4} justifyContent="center">
-              <Button onPress={() => setIsLogin(true)}>Back</Button>
+              <Button
+                onPress={() => {
+                  setIsLogin(true);
+                  setPassword("");
+                  setRePass("");
+                  setUsername("");
+                }}
+              >
+                Back
+              </Button>
               <Button onPress={() => handleLogin()}>Confirm</Button>
             </HStack>
           </>
