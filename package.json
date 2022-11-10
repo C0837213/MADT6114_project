@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.1",
@@ -18,8 +19,11 @@
     "react": "18.0.0",
     "react-native": "0.69.6",
     "react-native-elements": "^3.4.2",
+    "react-native-gesture-handler": "^2.8.0",
     "react-native-pager-view": "5.4.24",
+    "react-native-reanimated": "^2.12.0",
     "react-native-safe-area-context": "^3.3.2",
+    "react-native-screens": "^3.18.2",
     "react-native-svg": "12.3.0"
   },
   "devDependencies": {
