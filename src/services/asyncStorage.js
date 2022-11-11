@@ -14,7 +14,7 @@ export const storeLocalUserData = async (user) => {
 export const clearLocalUserData = async () => {
   try {
     await AsyncStorage.removeItem(USER_DATA_KEY);
-    return true
+    return true;
   } catch (e) {
     console.log("Error in clearLoadUserData: ", e);
   }

@@ -3,7 +3,7 @@ import React from "react";
 import { Box, Button, HStack, VStack, Stack, Input, Radio } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { getAllUsers, storeUser } from "../services/firebase";
-import { storeLocalUserData } from "../services/asyncStorage";
+import { getLocalUserData, storeLocalUserData } from "../services/asyncStorage";
 import LoadingModal from "../components/LoadingModal";
 
 const Auth = () => {
@@ -30,6 +30,19 @@ const Auth = () => {
 
     return unsubscribe;
   }, [navigation]);
+
+  React.useEffect(() => {
+    checkCurrentUser();
+  }, []);
+
+  const checkCurrentUser = async () => {
+    setLoading(true);
+    const curUser = await getLocalUserData();
+    if (curUser) {
+      navigation.navigate("HomeStack");
+    }
+    setLoading(false);
+  };
 
   const handleLogin = async () => {
     setLoading(true);
