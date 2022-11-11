@@ -24,7 +24,7 @@ const getData = async (key) => {
     });
     return res;
   } catch (e) {
-    console.error(`Error in ${key}`, e);
+    console.error(`Error in getData-${key}`, e);
   }
 };
 
@@ -36,7 +36,7 @@ const saveData = async (key, val) => {
     await updateDoc(ref, item);
     return true;
   } catch (e) {
-    console.error("Error in storeNewCat: ", e);
+    console.error(`Error in saveData- ${key}: `, e);
   }
 };
 
