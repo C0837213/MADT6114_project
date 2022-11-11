@@ -1,18 +1,100 @@
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Button, HStack, Input, Stack } from "native-base";
-import { storeNewCat } from "../services/firebase";
+import { Button, HStack, Input, Stack, VStack } from "native-base";
+import {
+  getAllCats,
+  removeCat,
+  storeNewCat,
+  updateCat,
+} from "../services/firebase";
+import LoadingModal from "../components/LoadingModal";
 
 const AdminEditCat = () => {
   const [catInput, setCatInput] = React.useState("");
+  const [catList, setCatList] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [editCat, setEditCat] = React.useState(null);
+
+  React.useEffect(() => {
+    getCatList();
+  }, []);
+
+  const getCatList = async () => {
+    const res = await getAllCats();
+    if (Array.isArray(res)) {
+      setCatList(res);
+      setLoading(false);
+    }
+  };
 
   const handleNewCat = async () => {
+    setLoading(true);
     const item = { name: catInput };
-    await storeNewCat(item);
+    const res = await storeNewCat(item);
+    if (res) {
+      await getCatList();
+    }
   };
+
+  const handleDel = async (item) => {
+    setLoading(true);
+    const res = await removeCat(item);
+    if (res) {
+      await getCatList();
+    }
+  };
+
+  const handleSubmitEdit = async () => {
+    setLoading(true);
+    const _item = { ...editCat, name: catInput };
+    const res = await updateCat(_item);
+    if (res) {
+      await getCatList();
+      await setCatInput("");
+      await setEditCat(null);
+    }
+  };
+
+  const handleEdit = (item) => {
+    setEditCat(item);
+    setCatInput(item.name);
+  };
+
+  const handleClear = () => {
+    setCatInput("");
+    setEditCat(null);
+  };
+
   return (
     <View style={styles.container}>
-      <Stack space={4} w="75%">
+      {loading ? <LoadingModal /> : null}
+      <Stack space={4} w="75%" h="100%">
+        <FlatList
+          data={catList}
+          keyExtractor={({ id }) => id}
+          ItemSeparatorComponent={() => (
+            <View style={{ height: 1.5, backgroundColor: "lightgray" }} />
+          )}
+          renderItem={({ item }) => (
+            <HStack
+              space={4}
+              justifyContent="space-between"
+              alignItems="center"
+              style={{ marginVertical: 8 }}
+            >
+              <Text style={{ minWidth: 100 }}>{item.name}</Text>
+              <Button
+                onPress={() => handleEdit(item)}
+                variant={editCat?.id === item.id ? "subtle" : "outline"}
+              >
+                Edit
+              </Button>
+              <Button colorScheme="secondary" onPress={() => handleDel(item)}>
+                Delete
+              </Button>
+            </HStack>
+          )}
+        />
         <Input
           size="md"
           placeholder="Enter category name"
@@ -20,8 +102,15 @@ const AdminEditCat = () => {
           value={catInput}
           onChangeText={setCatInput}
         />
-        <HStack justifyContent="center">
-          <Button onPress={handleNewCat}>Add new categories</Button>
+        <HStack justifyContent="center" space={4}>
+          <Button onPress={!editCat ? handleNewCat : handleSubmitEdit}>{`${
+            !editCat ? "Add new" : "Edit"
+          } categories`}</Button>
+          {editCat ? (
+            <Button variant="outline" onPress={handleClear}>
+              Clear
+            </Button>
+          ) : null}
         </HStack>
       </Stack>
     </View>
@@ -35,5 +124,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 16,
   },
 });

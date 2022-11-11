@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   getFirestore,
@@ -28,6 +29,28 @@ const getData = async (key) => {
   }
 };
 
+const removeData = async (key, item) => {
+  try {
+    const id = item.id;
+    const ref = doc(db, key, id);
+    await deleteDoc(ref, item);
+    return true;
+  } catch (e) {
+    console.error(`Error in removeData-${key}`, e);
+  }
+};
+
+const updateData = async (key, item) => {
+  try {
+    const id = item.id;
+    const ref = doc(db, key, id);
+    await updateDoc(ref, item);
+    return true;
+  } catch (e) {
+    console.error(`Error in updateData-${key}`, e);
+  }
+};
+
 const saveData = async (key, val) => {
   try {
     const docRef = await addDoc(collection(db, key), val);
@@ -50,4 +73,16 @@ export const storeUser = async (user) => {
 
 export const storeNewCat = async (cat) => {
   return await saveData(CAT_KEY, cat);
+};
+
+export const getAllCats = async () => {
+  return await getData(CAT_KEY);
+};
+
+export const removeCat = async (item) => {
+  return await removeData(CAT_KEY, item);
+};
+
+export const updateCat = async (item) => {
+  return await updateData(CAT_KEY, item);
 };
