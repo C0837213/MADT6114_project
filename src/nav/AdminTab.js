@@ -25,6 +25,7 @@ const AdminBottomTab = () => {
 
   return (
     <AdminTab.Navigator
+      initialRouteName="Edit"
       screenOptions={({ route }) => ({
         headerRight: () => {
           return (
