@@ -4,14 +4,16 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "native-base";
 import { Pressable } from "react-native";
 
-import Cat from "../screens/Cat";
-import History from "../screens/History";
-import Home from "../screens/Home";
+import TabViewComponent from "react-native-elements/dist/tab/TabView";
+
+import AdminEdit from "../screens/AdminEdit";
+import AdminHome from "../screens/AdminHome";
+import AdminOrders from "../screens/AdminOrders";
 import { clearLocalUserData } from "../services/asyncStorage";
 
-const Tab = createBottomTabNavigator();
+const AdminTab = createBottomTabNavigator();
 
-const BottomTab = () => {
+const AdminBottomTab = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const handleLogout = async () => {
@@ -22,7 +24,7 @@ const BottomTab = () => {
   };
 
   return (
-    <Tab.Navigator
+    <AdminTab.Navigator
       screenOptions={({ route }) => ({
         headerRight: () => {
           return (
@@ -43,11 +45,11 @@ const BottomTab = () => {
 
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "History") {
+          } else if (route.name === "Orders") {
             iconName = focused
               ? "ios-document-text"
               : "ios-document-text-outline";
-          } else if (route.name === "Cat") {
+          } else if (route.name === "Edit") {
             iconName = focused ? "albums-sharp" : "albums-outline";
           }
 
@@ -58,11 +60,11 @@ const BottomTab = () => {
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Cat" component={Cat} />
-      <Tab.Screen name="History" component={History} />
-    </Tab.Navigator>
+      <AdminTab.Screen name="Home" component={AdminHome} />
+      <AdminTab.Screen name="Edit" component={AdminEdit} />
+      <AdminTab.Screen name="Orders" component={AdminOrders} />
+    </AdminTab.Navigator>
   );
 };
 
-export default BottomTab;
+export default AdminBottomTab;

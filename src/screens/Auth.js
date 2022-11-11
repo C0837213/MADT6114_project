@@ -38,9 +38,7 @@ const Auth = () => {
   const checkCurrentUser = async () => {
     setLoading(true);
     const curUser = await getLocalUserData();
-    if (curUser) {
-      navigation.navigate("HomeStack");
-    }
+    handleNav(curUser);
     setLoading(false);
   };
 
@@ -55,14 +53,22 @@ const Auth = () => {
       if (user && password === user.password) {
         const res = await storeLocalUserData(user);
         if (res) {
+          handleNav(user);
           setLoading(false);
-          navigation.navigate("HomeStack");
         }
       } else {
         alert("Password is incorrect");
       }
     } else {
       alert("Please fill in the form");
+    }
+  };
+
+  const handleNav = (user) => {
+    if (user?.type === "user") {
+      navigation.navigate("HomeStack");
+    } else if (user?.type === "admin") {
+      navigation.navigate("AdminStack");
     }
   };
 
@@ -94,7 +100,7 @@ const Auth = () => {
           if (fbResult && result) {
             setLoading(false);
             resetScreen();
-            navigation.navigate("HomeStack", user);
+            handleNav(user);
           }
         } else {
           alert("Username have been used.");
