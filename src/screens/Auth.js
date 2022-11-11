@@ -3,6 +3,8 @@ import React from "react";
 import { Box, Button, HStack, VStack, Stack, Input, Radio } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { getAllUsers, storeUser } from "../services/firebase";
+import { storeLocalUserData } from "../services/asyncStorage";
+import LoadingModal from "../components/LoadingModal";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = React.useState(true);
@@ -11,6 +13,7 @@ const Auth = () => {
   const [rePass, setRePass] = React.useState("");
   const navigation = useNavigation();
   const [type, setType] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const resetScreen = () => {
     setIsLogin(true);
@@ -29,6 +32,7 @@ const Auth = () => {
   }, [navigation]);
 
   const handleLogin = async () => {
+    setLoading(true);
     if (password && username) {
       const currUsers = await getAllUsers();
       let user;
@@ -36,7 +40,11 @@ const Auth = () => {
         user = currUsers.find((item) => item.username === username);
       }
       if (user && password === user.password) {
-        navigation.navigate("HomeStack");
+        const res = await storeLocalUserData(user);
+        if (res) {
+          setLoading(false);
+          navigation.navigate("HomeStack");
+        }
       } else {
         alert("Password is incorrect");
       }
@@ -46,8 +54,13 @@ const Auth = () => {
   };
 
   const handleRegister = async () => {
-    if (password === rePass && username) {
+    if (password !== rePass) {
+      alert("Please enter the same password");
+      return;
+    }
+    if (password === rePass && username && type !== "") {
       //check existing name
+      setLoading(true);
       let valid = true;
       const currentUsers = await getAllUsers();
       if (Array.isArray(currentUsers)) {
@@ -56,16 +69,23 @@ const Auth = () => {
             valid = false;
           }
         });
-      }
-      if (valid) {
-        const user = {
-          username,
-          password,
-          type,
-        };
-        await storeUser(user);
-      } else {
-        alert("Username have been used.");
+        if (valid) {
+          const user = {
+            id: currentUsers.length,
+            username,
+            password,
+            type,
+          };
+          const fbResult = await storeUser(user);
+          const result = await storeLocalUserData(user);
+          if (fbResult && result) {
+            setLoading(false);
+            resetScreen();
+            navigation.navigate("HomeStack", user);
+          }
+        } else {
+          alert("Username have been used.");
+        }
       }
     } else {
       alert("Please fill in the form.");
@@ -74,6 +94,7 @@ const Auth = () => {
 
   return (
     <View style={styles.container}>
+      {loading ? <LoadingModal /> : null}
       <Stack space={4} w="75%">
         {isLogin ? (
           <>
@@ -81,13 +102,15 @@ const Auth = () => {
               size="md"
               placeholder="username"
               autoCapitalize="none"
+              value={username}
               onChangeText={setUsername}
             />
             <Input
               size="md"
               placeholder="password"
+              value={password}
               type="password"
-              onChange={setPassword}
+              onChangeText={setPassword}
             />
             <HStack space={4} justifyContent="center">
               <Button onPress={() => handleLogin()}>Login</Button>
@@ -109,17 +132,23 @@ const Auth = () => {
               size="md"
               placeholder="username"
               autoCapitalize="none"
+              value={username}
               onChangeText={setUsername}
             />
             <Input
               size="md"
               placeholder="password"
+              value={password}
+              autoCapitalize="none"
               type="password"
               onChangeText={setPassword}
             />
             <Input
               size="md"
-              placeholder="reenter password"
+              value={rePass}
+              placeholder="re-enter password"
+              autoCapitalize="none"
+              type="password"
               onChangeText={setRePass}
             />
             <Radio.Group
@@ -148,7 +177,7 @@ const Auth = () => {
               >
                 Back
               </Button>
-              <Button onPress={() => handleLogin()}>Confirm</Button>
+              <Button onPress={() => handleRegister()}>Confirm</Button>
             </HStack>
           </>
         )}

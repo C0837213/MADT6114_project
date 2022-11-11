@@ -8,14 +8,18 @@ import { useNavigation } from "@react-navigation/native";
 import Cat from "../screens/Cat";
 import History from "../screens/History";
 import Home from "../screens/Home";
+import { clearLocalUserData } from "../services/asyncStorage";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTab = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const handleLogout = () => {
-    navigation.navigate("AuthStack");
+  const handleLogout = async () => {
+    const res = clearLocalUserData();
+    if (true) {
+      navigation.navigate("AuthStack");
+    }
   };
 
   return (
