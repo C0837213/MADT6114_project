@@ -14,9 +14,9 @@ const db = getFirestore(app);
 const USER_DB_KEY = "users";
 const CAT_KEY = "categories";
 
-export const getAllUsers = async () => {
+const getData = async (key) => {
   try {
-    const querySnapshot = await getDocs(collection(db, USER_DB_KEY));
+    const querySnapshot = await getDocs(collection(db, key));
     const res = [];
     querySnapshot.forEach((doc) => {
       const item = { ...doc.data(), id: doc.id };
@@ -24,27 +24,30 @@ export const getAllUsers = async () => {
     });
     return res;
   } catch (e) {
-    console.error("Error in getAllUsers: ", e);
+    console.error(`Error in ${key}`, e);
   }
 };
 
-export const storeUser = async (user) => {
+const saveData = async (key, val) => {
   try {
-    const docRef = await addDoc(collection(db, USER_DB_KEY), user);
-    console.log("Document written with ID: ", docRef.id);
-    return true;
-  } catch (e) {
-    console.error("Error in storeUser: ", e);
-  }
-};
-
-export const storeNewCat = async (cat) => {
-  try {
-    const docRef = await addDoc(collection(db, CAT_KEY), cat);
-    const item = { ...cat, id: docRef.id };
+    const docRef = await addDoc(collection(db, key), val);
+    const item = { ...val, id: docRef.id };
     const ref = doc(db, CAT_KEY, item.id);
     await updateDoc(ref, item);
+    return true;
   } catch (e) {
     console.error("Error in storeNewCat: ", e);
   }
+};
+
+export const getAllUsers = async () => {
+  return await getData(USER_DB_KEY);
+};
+
+export const storeUser = async (user) => {
+  return saveData(USER_DB_KEY, user);
+};
+
+export const storeNewCat = async (cat) => {
+  return await saveData(CAT_KEY, cat);
 };
