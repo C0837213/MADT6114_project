@@ -2,11 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Box, Button, HStack, VStack, Stack, Input, Radio } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-import {
-  getData,
-  storeUserData,
-  USER_DATA_KEY,
-} from "../services/asyncStorage";
+import { getAllUsers, storeUser } from "../services/firebase";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = React.useState(true);
@@ -34,7 +30,7 @@ const Auth = () => {
 
   const handleLogin = async () => {
     if (password && username) {
-      const currUsers = await getData(USER_DATA_KEY);
+      const currUsers = await getAllUsers();
       let user;
       if (Array.isArray(currUsers)) {
         user = currUsers.find((item) => item.username === username);
@@ -53,7 +49,7 @@ const Auth = () => {
     if (password === rePass && username) {
       //check existing name
       let valid = true;
-      const currentUsers = await getData(USER_DATA_KEY);
+      const currentUsers = await getAllUsers();
       if (Array.isArray(currentUsers)) {
         currentUsers.forEach((user) => {
           if (user.username === username) {
@@ -67,7 +63,7 @@ const Auth = () => {
           password,
           type,
         };
-        await storeUserData();
+        await storeUser(user);
       } else {
         alert("Username have been used.");
       }
@@ -84,6 +80,7 @@ const Auth = () => {
             <Input
               size="md"
               placeholder="username"
+              autoCapitalize="none"
               onChangeText={setUsername}
             />
             <Input
@@ -111,6 +108,7 @@ const Auth = () => {
             <Input
               size="md"
               placeholder="username"
+              autoCapitalize="none"
               onChangeText={setUsername}
             />
             <Input
