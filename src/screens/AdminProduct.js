@@ -1,25 +1,52 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { useRoute } from "@react-navigation/native";
-import { Button, HStack, Input, VStack } from "native-base";
-import { storeNewPro } from "../services/firebase";
+import {
+  Badge,
+  Button,
+  HStack,
+  Image,
+  Input,
+  useTheme,
+  VStack,
+} from "native-base";
+import { storeNewPro, uploadImage } from "../services/firebase";
+import * as ImagePicker from "expo-image-picker";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Pressable } from "react-native";
+import LoadingModal from "../components/LoadingModal";
 
 const AdminProduct = () => {
   const { params } = useRoute();
   const catId = params?.cat?.id || "";
   const catName = params?.cat?.name || "";
-
+  const { colors } = useTheme();
   const [name, setName] = React.useState("");
   const [price, setPrice] = React.useState("");
   const [quantity, setQuantity] = React.useState("");
+  const [image, setImage] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const handleClear = () => {
     setName("");
     setPrice("");
+    setImage("");
     setQuantity("");
   };
 
+  const handleUpload = async (uri) => {
+    return await uploadImage(uri);
+  };
+
   const handleSub = async () => {
+    if (price && quantity && name && image) {
+      setLoading(true);
+      const url = await handleUpload(image);
+      await saveProd(url);
+    }
+  };
+
+  const saveProd = async (url) => {
     const priceInFloat = parseFloat(price);
     const quantityInInt = parseInt(quantity);
     const splitQ = quantity.split(".");
@@ -31,17 +58,37 @@ const AdminProduct = () => {
       //   splitQ.length === 1 &&
       //   splitPrice.length === 2
     ) {
-      const prod = { catId, name, price, quantity, catName };
+      const prod = { catId, name, price, quantity, catName, image: url };
       const res = await storeNewPro(prod);
+      if (res) {
+        await setLoading(false);
+      }
+    }
+  };
+
+  const importPhoto = async () => {
+    let res = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [4, 3],
+      quality: 0.2,
+    });
+
+    if (!res.cancelled) {
+      setImage(res.uri);
     }
   };
 
   return (
     <View style={styles.container}>
-      <VStack space={16} w="90%">
-        <HStack>
+      {loading && <LoadingModal />}
+      <VStack space={8} w="90%">
+        <HStack alignItems="center" space={40}>
           <Text>Category: </Text>
-          <Text>{catName}</Text>
+          {/* <Text>{catName}</Text> */}
+          <Badge colorScheme="success" variant="solid">
+            {catName}
+          </Badge>
         </HStack>
         <HStack w="90%" alignItems="center" justifyContent="space-between">
           <Text>Product name: </Text>
@@ -72,6 +119,36 @@ const AdminProduct = () => {
             w="50%"
             value={quantity}
           />
+        </HStack>
+        <HStack>
+          <HStack w="90%" alignItems="center" justifyContent="space-between">
+            <Text>Icon:</Text>
+            {image ? (
+              <Image
+                src={image}
+                alt="image"
+                style={{ width: 200, height: 150 }}
+              />
+            ) : (
+              <Button
+                onPress={importPhoto}
+                variant="outline"
+                isDisabled={image}
+                style={{ width: 200, height: 150 }}
+              >
+                Import Icon
+              </Button>
+            )}
+          </HStack>
+          {image && (
+            <Pressable onPress={() => setImage("")}>
+              <MaterialIcons
+                name="highlight-remove"
+                size={24}
+                color={colors.primary["500"]}
+              />
+            </Pressable>
+          )}
         </HStack>
 
         <HStack space={4} justifyContent="center">

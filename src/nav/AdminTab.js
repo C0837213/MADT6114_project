@@ -25,7 +25,7 @@ const AdminBottomTab = () => {
 
   return (
     <AdminTab.Navigator
-      initialRouteName="Edit"
+      initialRouteName="AdminEdit"
       screenOptions={({ route }) => ({
         headerRight: () => {
           return (
@@ -50,7 +50,7 @@ const AdminBottomTab = () => {
             iconName = focused
               ? "ios-document-text"
               : "ios-document-text-outline";
-          } else if (route.name === "Edit") {
+          } else if (route.name === "AdminEdit") {
             iconName = focused ? "albums-sharp" : "albums-outline";
           } else if (route.name === "Product") {
             iconName = focused ? "browsers-sharp" : "browsers-outline";
@@ -66,7 +66,7 @@ const AdminBottomTab = () => {
       <AdminTab.Screen name="Home" component={AdminHome} />
       <AdminTab.Screen name="Product" component={AdminProduct} />
       <AdminTab.Screen
-        name="Edit"
+        name="AdminEdit"
         component={AdminEditStack}
         options={{ headerShown: false }}
       />
