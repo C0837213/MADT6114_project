@@ -9,7 +9,8 @@ import AdminHome from "../screens/AdminHome";
 import AdminOrders from "../screens/AdminOrders";
 import AdminProduct from "../screens/AdminProduct";
 import { clearLocalUserData } from "../services/asyncStorage";
-import AdminEditStack from "./AdminEdit";
+import AdminEditStack from "./AdminEditStack";
+import AdminProductStack from "./AdminProductStack";
 
 const AdminTab = createBottomTabNavigator();
 
@@ -25,7 +26,7 @@ const AdminBottomTab = () => {
 
   return (
     <AdminTab.Navigator
-      initialRouteName="AdminEdit"
+      initialRouteName="Product"
       screenOptions={({ route }) => ({
         headerRight: () => {
           return (
@@ -64,7 +65,11 @@ const AdminBottomTab = () => {
       })}
     >
       <AdminTab.Screen name="Home" component={AdminHome} />
-      <AdminTab.Screen name="Product" component={AdminProduct} />
+      <AdminTab.Screen
+        name="Product"
+        component={AdminProductStack}
+        options={{ headerShown: false }}
+      />
       <AdminTab.Screen
         name="AdminEdit"
         component={AdminEditStack}

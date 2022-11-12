@@ -27,59 +27,14 @@ const PRO_KEY = "products";
 
 export const uploadImage = async (uri) => {
   try {
-    const fileName = Date.now() + ".jpg";
+    const type = uri.split(".")[1];
+    const fileName = Date.now() + type;
     const response = await fetch(uri);
     const blobFile = await response.blob();
     const storage = getStorage(app);
     const fileRef = ref(storage, fileName);
     await uploadBytesResumable(fileRef, blobFile);
     return await getDownloadURL(fileRef);
-    // const uploadTask = st.uploadBytesResumable(fileRef, blobFile);
-
-    // // Listen for state changes, errors, and completion of the upload.
-    // await uploadTask;
-    // const url = await st.getDownloadURL(uploadTask.snapshot.ref);
-    // return url;
-    // .on(
-    //   "state_changed",
-    //   (snapshot) => {
-    //     // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-    //     const progress =
-    //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    //     console.log("Upload is " + progress + "% done");
-    //     switch (snapshot.state) {
-    //       case "paused":
-    //         console.log("Upload is paused");
-    //         break;
-    //       case "running":
-    //         console.log("Upload is running");
-    //         break;
-    //     }
-    //   },
-    //   (error) => {
-    //     // A full list of error codes is available at
-    //     // https://firebase.google.com/docs/storage/web/handle-errors
-    //     switch (error.code) {
-    //       case "storage/unauthorized":
-    //         console.log("User doesn't have permission to access the object");
-    //         break;
-    //       case "storage/canceled":
-    //         console.log("User canceled the upload");
-    //         break;
-    //       case "storage/unknown":
-    //         console.log("Unknown error occurred, inspect error.serverResponse");
-    //         break;
-    //     }
-    //   },
-    //   () => {
-    //     // Upload completed successfully, now we can get the download URL
-    //     st.getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-    //       console.log("File available at", downloadURL);
-    //       //perform your task
-    //       return downloadURL;
-    //     });
-    //   }
-    // );
   } catch (e) {
     console.error(`Error in updateImage-${uri}`, e);
   }
@@ -161,4 +116,8 @@ export const updateCat = async (item) => {
 
 export const storeNewPro = async (pro) => {
   return await saveData(PRO_KEY, pro);
+};
+
+export const getAllProds = async () => {
+  return await getData(PRO_KEY);
 };

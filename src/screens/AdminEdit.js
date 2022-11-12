@@ -16,6 +16,7 @@ const AdminEditCat = () => {
   const [loading, setLoading] = React.useState(false);
   const [editCat, setEditCat] = React.useState(null);
   const navigate = useNavigation();
+  const [isFetching, setIsFetching] = React.useState(false);
 
   React.useEffect(() => {
     getCatList();
@@ -26,6 +27,7 @@ const AdminEditCat = () => {
     if (Array.isArray(res)) {
       setCatList(res);
       setLoading(false);
+      setIsFetching(false);
     }
   };
 
@@ -71,11 +73,18 @@ const AdminEditCat = () => {
     navigate.navigate("AddProduct", { cat: item });
   };
 
+  const onRefresh = () => {
+    setIsFetching(true);
+    getCatList();
+  };
+
   return (
     <View style={styles.container}>
       {loading ? <LoadingModal /> : null}
       <Stack space={4} w="90%" h="100%">
         <FlatList
+          refreshing={isFetching}
+          onRefresh={() => onRefresh()}
           data={catList}
           keyExtractor={({ id }) => id}
           ItemSeparatorComponent={() => (

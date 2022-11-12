@@ -1,12 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   Badge,
   Button,
   HStack,
   Image,
   Input,
+  useNativeBase,
   useTheme,
   VStack,
 } from "native-base";
@@ -26,7 +27,7 @@ const AdminProduct = () => {
   const [quantity, setQuantity] = React.useState("");
   const [image, setImage] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-
+  const navigation = useNavigation();
   const handleClear = () => {
     setName("");
     setPrice("");
@@ -62,6 +63,7 @@ const AdminProduct = () => {
       const res = await storeNewPro(prod);
       if (res) {
         await setLoading(false);
+        await navigation.goBack();
       }
     }
   };
@@ -123,18 +125,20 @@ const AdminProduct = () => {
         <HStack>
           <HStack w="90%" alignItems="center" justifyContent="space-between">
             <Text>Icon:</Text>
+
             {image ? (
               <Image
+                resizeMode="contain"
                 src={image}
                 alt="image"
-                style={{ width: 200, height: 150 }}
+                style={{ width: 100, height: 100 }}
               />
             ) : (
               <Button
                 onPress={importPhoto}
                 variant="outline"
                 isDisabled={image}
-                style={{ width: 200, height: 150 }}
+                style={{ width: 100, height: 100 }}
               >
                 Import Icon
               </Button>
