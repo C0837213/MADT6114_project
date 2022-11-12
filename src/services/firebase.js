@@ -14,6 +14,7 @@ const db = getFirestore(app);
 
 const USER_DB_KEY = "users";
 const CAT_KEY = "categories";
+const PRO_KEY = "products";
 
 const getData = async (key) => {
   try {
@@ -32,7 +33,7 @@ const getData = async (key) => {
 const removeData = async (key, item) => {
   try {
     const id = item.id;
-    const ref = doc(db, key, id);
+    const ref = await doc(db, key, id);
     await deleteDoc(ref, item);
     return true;
   } catch (e) {
@@ -43,7 +44,7 @@ const removeData = async (key, item) => {
 const updateData = async (key, item) => {
   try {
     const id = item.id;
-    const ref = doc(db, key, id);
+    const ref = await doc(db, key, id);
     await updateDoc(ref, item);
     return true;
   } catch (e) {
@@ -54,10 +55,12 @@ const updateData = async (key, item) => {
 const saveData = async (key, val) => {
   try {
     const docRef = await addDoc(collection(db, key), val);
-    const item = { ...val, id: docRef.id };
-    const ref = doc(db, CAT_KEY, item.id);
-    await updateDoc(ref, item);
-    return true;
+    if (docRef.id) {
+      const item = { ...val, id: docRef.id };
+      await updateDoc(docRef, item);
+      return true;
+    }
+    return false;
   } catch (e) {
     console.error(`Error in saveData- ${key}: `, e);
   }
@@ -85,4 +88,8 @@ export const removeCat = async (item) => {
 
 export const updateCat = async (item) => {
   return await updateData(CAT_KEY, item);
+};
+
+export const storeNewPro = async (pro) => {
+  return await saveData(PRO_KEY, pro);
 };
