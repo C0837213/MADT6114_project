@@ -37,7 +37,7 @@ const AdminProductStack = () => {
       })}
     >
       <Stack.Screen name="ProductList" component={AdminProductList} />
-      <Stack.Screen name="Edit" component={AdminProduct} />
+      <Stack.Screen name="ProductEdit" component={AdminProduct} />
     </Stack.Navigator>
   );
 };

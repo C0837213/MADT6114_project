@@ -19,15 +19,17 @@ import LoadingModal from "../components/LoadingModal";
 
 const AdminProduct = () => {
   const { params } = useRoute();
-  const catId = params?.cat?.id || "";
-  const catName = params?.cat?.name || "";
+  const item = params.item;
+  const catId = params?.cat?.id || item?.catId || "";
+  const catName = params?.cat?.name || item?.catName || "";
   const { colors } = useTheme();
-  const [name, setName] = React.useState("");
-  const [price, setPrice] = React.useState("");
-  const [quantity, setQuantity] = React.useState("");
-  const [image, setImage] = React.useState("");
+  const [name, setName] = React.useState(item ? item.name : "");
+  const [price, setPrice] = React.useState(item ? item.price : "");
+  const [quantity, setQuantity] = React.useState(item ? item.quantity : "");
+  const [image, setImage] = React.useState(item ? item.image : "");
   const [loading, setLoading] = React.useState(false);
   const navigation = useNavigation();
+
   const handleClear = () => {
     setName("");
     setPrice("");
@@ -42,8 +44,15 @@ const AdminProduct = () => {
   const handleSub = async () => {
     if (price && quantity && name && image) {
       setLoading(true);
-      const url = await handleUpload(image);
-      await saveProd(url);
+      let url = "";
+      if (image.includes("http")) {
+        url = image;
+      } else {
+        url = await handleUpload(image);
+      }
+      if (url) {
+        await saveProd(url);
+      }
     }
   };
 
