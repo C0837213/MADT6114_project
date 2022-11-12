@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Button, HStack, Input, Stack, VStack } from "native-base";
 import {
@@ -8,12 +8,14 @@ import {
   updateCat,
 } from "../services/firebase";
 import LoadingModal from "../components/LoadingModal";
+import { useNavigation } from "@react-navigation/native";
 
 const AdminEditCat = () => {
   const [catInput, setCatInput] = React.useState("");
   const [catList, setCatList] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [editCat, setEditCat] = React.useState(null);
+  const navigate = useNavigation();
 
   React.useEffect(() => {
     getCatList();
@@ -65,10 +67,14 @@ const AdminEditCat = () => {
     setEditCat(null);
   };
 
+  const AddProduct = (item) => {
+    navigate.navigate("AddProduct", { cat: item });
+  };
+
   return (
     <View style={styles.container}>
       {loading ? <LoadingModal /> : null}
-      <Stack space={4} w="75%" h="100%">
+      <Stack space={4} w="90%" h="100%">
         <FlatList
           data={catList}
           keyExtractor={({ id }) => id}
@@ -77,21 +83,23 @@ const AdminEditCat = () => {
           )}
           renderItem={({ item }) => (
             <HStack
-              space={4}
               justifyContent="space-between"
               alignItems="center"
               style={{ marginVertical: 8 }}
             >
               <Text style={{ minWidth: 100 }}>{item.name}</Text>
-              <Button
-                onPress={() => handleEdit(item)}
-                variant={editCat?.id === item.id ? "subtle" : "outline"}
-              >
-                Edit
-              </Button>
-              <Button colorScheme="secondary" onPress={() => handleDel(item)}>
-                Delete
-              </Button>
+              <HStack space={3}>
+                <Button onPress={() => AddProduct(item)}>+ Product</Button>
+                <Button
+                  onPress={() => handleEdit(item)}
+                  variant={editCat?.id === item.id ? "subtle" : "outline"}
+                >
+                  Edit
+                </Button>
+                <Button colorScheme="secondary" onPress={() => handleDel(item)}>
+                  Delete
+                </Button>
+              </HStack>
             </HStack>
           )}
         />

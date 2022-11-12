@@ -4,12 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "native-base";
 import { Pressable } from "react-native";
 
-import TabViewComponent from "react-native-elements/dist/tab/TabView";
-
 import AdminEdit from "../screens/AdminEdit";
 import AdminHome from "../screens/AdminHome";
 import AdminOrders from "../screens/AdminOrders";
+import AdminProduct from "../screens/AdminProduct";
 import { clearLocalUserData } from "../services/asyncStorage";
+import AdminEditStack from "./AdminEdit";
 
 const AdminTab = createBottomTabNavigator();
 
@@ -52,6 +52,8 @@ const AdminBottomTab = () => {
               : "ios-document-text-outline";
           } else if (route.name === "Edit") {
             iconName = focused ? "albums-sharp" : "albums-outline";
+          } else if (route.name === "Product") {
+            iconName = focused ? "browsers-sharp" : "browsers-outline";
           }
 
           // You can return any component that you like here!
@@ -62,7 +64,12 @@ const AdminBottomTab = () => {
       })}
     >
       <AdminTab.Screen name="Home" component={AdminHome} />
-      <AdminTab.Screen name="Edit" component={AdminEdit} />
+      <AdminTab.Screen name="Product" component={AdminProduct} />
+      <AdminTab.Screen
+        name="Edit"
+        component={AdminEditStack}
+        options={{ headerShown: false }}
+      />
       <AdminTab.Screen name="Orders" component={AdminOrders} />
     </AdminTab.Navigator>
   );
