@@ -30,7 +30,7 @@ const AdminBottomTab = () => {
         headerRight: () => {
           return (
             <Pressable
-              style={{ paddingRight: 16 }}
+              style={{ paddingRight: 20 }}
               onPress={() => handleLogout()}
             >
               <Ionicons

@@ -12,21 +12,20 @@ const Stack = createNativeStackNavigator();
 const AdminEditStack = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
+
   const handleLogout = async () => {
     const res = clearLocalUserData();
     if (true) {
       navigation.navigate("AuthStack");
     }
   };
+
   return (
     <Stack.Navigator
       screenOptions={({ route }) => ({
         headerRight: () => {
           return (
-            <Pressable
-              style={{ paddingRight: 16 }}
-              // onPress={() => handleLogout()}
-            >
+            <Pressable onPress={() => handleLogout()}>
               <Ionicons
                 name="log-out-outline"
                 size={24}
