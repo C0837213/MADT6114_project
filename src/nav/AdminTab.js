@@ -6,7 +6,7 @@ import { Pressable } from "react-native";
 
 import AdminEdit from "../screens/AdminEdit";
 import AdminHome from "../screens/AdminHome";
-import AdminOrders from "../screens/AdminOrders";
+import AdminUsers from "../screens/AdminUsers";
 import AdminProduct from "../screens/AdminProduct";
 import { clearLocalUserData } from "../services/asyncStorage";
 import AdminEditStack from "./AdminEditStack";
@@ -26,7 +26,7 @@ const AdminBottomTab = () => {
 
   return (
     <AdminTab.Navigator
-      initialRouteName="Product"
+      initialRouteName="Users"
       screenOptions={({ route }) => ({
         headerRight: () => {
           return (
@@ -47,10 +47,8 @@ const AdminBottomTab = () => {
 
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Orders") {
-            iconName = focused
-              ? "ios-document-text"
-              : "ios-document-text-outline";
+          } else if (route.name === "Users") {
+            iconName = focused ? "man" : "man-outline";
           } else if (route.name === "AdminEdit") {
             iconName = focused ? "albums-sharp" : "albums-outline";
           } else if (route.name === "Product") {
@@ -75,7 +73,7 @@ const AdminBottomTab = () => {
         component={AdminEditStack}
         options={{ headerShown: false }}
       />
-      <AdminTab.Screen name="Orders" component={AdminOrders} />
+      <AdminTab.Screen name="Users" component={AdminUsers} />
     </AdminTab.Navigator>
   );
 };

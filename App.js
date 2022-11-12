@@ -23,8 +23,8 @@ Customer should be able:
 •	check order status
 •	create an account to save their personal data (this is optional for the user in case they decide to purchase anything)
 Admin user should be able to:
-•	add/remove/modify categories of products
-•	add/remove/modify products
+•	add/remove/modify categories of products ✅
+•	add/remove/modify products ✅
 •	search for a customer information and view their past orders
 •	modify a pending order of a customer
 •	modify the status of the order (pending/completed/ready for shipment/shipped)
