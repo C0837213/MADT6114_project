@@ -121,3 +121,11 @@ export const storeNewPro = async (pro) => {
 export const getAllProds = async () => {
   return await getData(PRO_KEY);
 };
+
+export const removeProd = async (item) => {
+  return await removeData(PRO_KEY, item);
+};
+
+export const updateProd = async (item) => {
+  return await updateData(PRO_KEY, item);
+};

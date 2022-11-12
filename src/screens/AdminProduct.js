@@ -11,7 +11,12 @@ import {
   useTheme,
   VStack,
 } from "native-base";
-import { storeNewPro, uploadImage } from "../services/firebase";
+import {
+  removeProd,
+  storeNewPro,
+  updateProd,
+  uploadImage,
+} from "../services/firebase";
 import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Pressable } from "react-native";
@@ -69,7 +74,14 @@ const AdminProduct = () => {
       //   splitPrice.length === 2
     ) {
       const prod = { catId, name, price, quantity, catName, image: url };
-      const res = await storeNewPro(prod);
+
+      let res = false;
+      if (!item) {
+        res = await storeNewPro(prod);
+      } else {
+        prod.id = item.id;
+        res = await updateProd(prod);
+      }
       if (res) {
         await setLoading(false);
         await navigation.goBack();
@@ -87,6 +99,15 @@ const AdminProduct = () => {
 
     if (!res.cancelled) {
       setImage(res.uri);
+    }
+  };
+
+  const handleDelete = async () => {
+    setLoading(true);
+    const res = await removeProd(item);
+    if (res) {
+      setLoading(false);
+      navigation.goBack();
     }
   };
 
@@ -165,9 +186,15 @@ const AdminProduct = () => {
         </HStack>
 
         <HStack space={4} justifyContent="center">
-          <Button colorScheme="secondary" onPress={handleClear}>
-            Clear
-          </Button>
+          {!item ? (
+            <Button colorScheme="secondary" onPress={handleClear}>
+              Clear
+            </Button>
+          ) : (
+            <Button colorScheme="secondary" onPress={handleDelete}>
+              Delete
+            </Button>
+          )}
           <Button onPress={handleSub}>Submit</Button>
         </HStack>
       </VStack>
