@@ -164,7 +164,7 @@ export const storeUser = async (user) => {
         return item;
       }
     });
-    return _user;
+    return _user[0];
   }
 };
 
