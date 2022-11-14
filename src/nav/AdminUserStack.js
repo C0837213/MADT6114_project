@@ -1,15 +1,17 @@
-import AdminEditCat from "../screens/AdminEdit";
-import AdminProduct from "../screens/AdminProduct";
-import { Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "native-base";
 import { clearLocalUserData } from "../services/asyncStorage";
-import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+
+import AdminUsersList from "../screens/AdminUserList";
+import AdminUser from "../screens/AdminUser";
+import { Pressable } from "react-native";
+import AdminUserOrder from "../screens/AdminUserOrder";
 
 const Stack = createNativeStackNavigator();
 
-const AdminEditStack = () => {
+const AdminUserStack = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -36,10 +38,11 @@ const AdminEditStack = () => {
         },
       })}
     >
-      <Stack.Screen name="Edit" component={AdminEditCat} />
-      <Stack.Screen name="AddProduct" component={AdminProduct} />
+      <Stack.Screen name="Users" component={AdminUsersList} />
+      <Stack.Screen name="User" component={AdminUser} />
+      <Stack.Screen name="UserOrder" component={AdminUserOrder} />
     </Stack.Navigator>
   );
 };
 
-export default AdminEditStack;
+export default AdminUserStack;

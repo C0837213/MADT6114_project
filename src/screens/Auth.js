@@ -11,15 +11,20 @@ const Auth = () => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [rePass, setRePass] = React.useState("");
+  const [address, setAddress] = React.useState("");
   const navigation = useNavigation();
-  const [type, setType] = React.useState("");
+  const [type, setType] = React.useState("user");
   const [loading, setLoading] = React.useState(false);
+  const [phoneNum, setPhoneNum] = React.useState("");
 
   const resetScreen = () => {
     setIsLogin(true);
     setUsername("");
     setPassword("");
+    setAddress("");
+    setType("user");
     setRePass("");
+    setPhoneNum("");
   };
 
   React.useEffect(() => {
@@ -90,11 +95,14 @@ const Auth = () => {
         });
         if (valid) {
           const user = {
-            id: currentUsers.length,
             username,
             password,
             type,
           };
+          if (type === "user") {
+            user.address = address;
+            user.phoneNum = phoneNum;
+          }
           const fbResult = await storeUser(user);
           const result = await storeLocalUserData(user);
           if (fbResult && result) {
@@ -170,6 +178,24 @@ const Auth = () => {
               type="password"
               onChangeText={setRePass}
             />
+            {type === "user" ? (
+              <Input
+                size="md"
+                placeholder="enter the address"
+                autoCapitalize="none"
+                onChangeText={setAddress}
+                value={address}
+              />
+            ) : null}
+            {type === "user" ? (
+              <Input
+                size="md"
+                placeholder="enter your phone number"
+                autoCapitalize="none"
+                value={phoneNum}
+                onChangeText={setPhoneNum}
+              />
+            ) : null}
             <Radio.Group
               value={type}
               onChange={(nextValue) => {

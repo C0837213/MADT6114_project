@@ -5,7 +5,9 @@ import {
   doc,
   getDocs,
   getFirestore,
+  query,
   updateDoc,
+  where,
 } from "@firebase/firestore";
 
 import {
@@ -24,6 +26,7 @@ const storage = getStorage(app);
 const USER_DB_KEY = "users";
 const CAT_KEY = "categories";
 const PRO_KEY = "products";
+const ORDER_KEY = "orders";
 
 export const uploadImage = async (uri) => {
   try {
@@ -45,7 +48,7 @@ const getData = async (key) => {
     const querySnapshot = await getDocs(collection(db, key));
     const res = [];
     querySnapshot.forEach((doc) => {
-      const item = { ...doc.data(), id: doc.id };
+      const item = { ...doc.data() };
       res.push(item);
     });
     return res;
@@ -90,6 +93,49 @@ const saveData = async (key, val) => {
   }
 };
 
+export const getUserOrders = async (uid) => {
+  try {
+    const q = query(collection(db, ORDER_KEY), where("uid", "==", uid));
+    const snap = await getDocs(q);
+    const res = [];
+    snap.forEach((doc) => {
+      const item = { ...doc.data() };
+      res.push(item);
+    });
+    return res;
+  } catch (error) {
+    console.error(`Error in getUserOrders- ${uid}`, error);
+  }
+};
+
+export const getUserOrderByOrderId = async (id) => {
+  try {
+    const q = query(collection(db, ORDER_KEY), where("id", "==", id));
+    const snap = await getDocs(q);
+    let order;
+    snap.forEach((doc) => {
+      order = { ...doc.data() };
+    });
+    return order;
+  } catch (error) {
+    console.error(`Error in getUserOrderByOrderId - ${id}`, error);
+  }
+};
+
+export const getUserData = async (id) => {
+  try {
+    const q = query(collection(db, USER_DB_KEY), where("id", "==", id));
+    const snap = await getDocs(q);
+    let user;
+    snap.forEach((doc) => {
+      user = { ...doc.data() };
+    });
+    return user;
+  } catch (error) {
+    console.error(`Error in getUserData-${id}`, error);
+  }
+};
+
 export const getAllUsers = async () => {
   return await getData(USER_DB_KEY);
 };
@@ -127,5 +173,9 @@ export const removeProd = async (item) => {
 };
 
 export const updateProd = async (item) => {
+  return await updateData(PRO_KEY, item);
+};
+
+export const updateOrder = async (item) => {
   return await updateData(PRO_KEY, item);
 };

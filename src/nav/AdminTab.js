@@ -4,13 +4,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "native-base";
 import { Pressable } from "react-native";
 
-import AdminEdit from "../screens/AdminEdit";
 import AdminHome from "../screens/AdminHome";
-import AdminUsers from "../screens/AdminUsers";
-import AdminProduct from "../screens/AdminProduct";
 import { clearLocalUserData } from "../services/asyncStorage";
 import AdminEditStack from "./AdminEditStack";
 import AdminProductStack from "./AdminProductStack";
+import AdminUserStack from "./AdminUserStack";
 
 const AdminTab = createBottomTabNavigator();
 
@@ -26,7 +24,7 @@ const AdminBottomTab = () => {
 
   return (
     <AdminTab.Navigator
-      initialRouteName="Users"
+      initialRouteName="UsersList"
       screenOptions={({ route }) => ({
         headerRight: () => {
           return (
@@ -47,7 +45,7 @@ const AdminBottomTab = () => {
 
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Users") {
+          } else if (route.name === "UsersList") {
             iconName = focused ? "man" : "man-outline";
           } else if (route.name === "AdminEdit") {
             iconName = focused ? "albums-sharp" : "albums-outline";
@@ -73,7 +71,11 @@ const AdminBottomTab = () => {
         component={AdminEditStack}
         options={{ headerShown: false }}
       />
-      <AdminTab.Screen name="Users" component={AdminUsers} />
+      <AdminTab.Screen
+        name="UsersList"
+        component={AdminUserStack}
+        options={{ headerShown: false }}
+      />
     </AdminTab.Navigator>
   );
 };

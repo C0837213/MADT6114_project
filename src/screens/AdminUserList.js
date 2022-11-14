@@ -1,13 +1,20 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React from "react";
 import { getAllUsers } from "../services/firebase";
 import { HStack, Input, Stack, VStack } from "native-base";
+import { useNavigation } from "@react-navigation/native";
 
-const AdminUsers = () => {
+const AdminUserList = () => {
   const [userList, setUserList] = React.useState([]);
   const [input, setInput] = React.useState("");
   const [filteredList, setFilteredList] = React.useState([]);
-
+  const navigation = useNavigation();
   React.useEffect(() => {
     fetchUserList();
   }, []);
@@ -16,6 +23,10 @@ const AdminUsers = () => {
     const res = await getAllUsers();
     const _userList = res.filter((item) => item.type === "user");
     setUserList(_userList);
+  };
+
+  const handleItemOnPress = (id) => {
+    navigation.navigate("User", { id });
   };
 
   const handleSearchTextChange = (val) => {
@@ -45,24 +56,27 @@ const AdminUsers = () => {
         ItemSeparatorComponent={() => (
           <View style={{ height: 1.5, backgroundColor: "lightgray" }} />
         )}
+        keyExtractor={({ id }) => id}
         renderItem={({ item }) => (
-          <VStack space={4} marginTop={4} marginBottom={4}>
-            <HStack space={4}>
-              <Text>Username: </Text>
-              <Text>{item.username}</Text>
-            </HStack>
-            <HStack space={4}>
-              <Text>User id: </Text>
-              <Text>{item.id}</Text>
-            </HStack>
-          </VStack>
+          <TouchableOpacity onPress={() => handleItemOnPress(item.id)}>
+            <VStack space={4} marginTop={4} marginBottom={4}>
+              <HStack space={4}>
+                <Text>Username: </Text>
+                <Text>{item.username}</Text>
+              </HStack>
+              <HStack space={4}>
+                <Text>User id: </Text>
+                <Text>{item.id}</Text>
+              </HStack>
+            </VStack>
+          </TouchableOpacity>
         )}
       />
     </View>
   );
 };
 
-export default AdminUsers;
+export default AdminUserList;
 
 const styles = StyleSheet.create({
   container: {
