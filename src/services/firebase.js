@@ -27,6 +27,7 @@ const USER_DB_KEY = "users";
 const CAT_KEY = "categories";
 const PRO_KEY = "products";
 const ORDER_KEY = "orders";
+const CART_KEY = "carts"
 
 export const uploadImage = async (uri) => {
   try {
@@ -197,3 +198,19 @@ export const updateOrder = async (item) => {
 export const createNewOrder = async (item) => {
   return await saveData(ORDER_KEY, item);
 };
+
+export const addToCart = async (item) => {
+  return await saveData(CART_KEY, item)
+}
+
+export const updateCart = async (item) => {
+  return await updateData(CART_KEY, item)
+}
+
+export const getCart = async () => {
+  return await getData(CART_KEY)
+}
+
+export const getOrder = async () => {
+  return await getData(ORDER_KEY)
+}
