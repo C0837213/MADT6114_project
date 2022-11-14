@@ -59,7 +59,6 @@ const Auth = () => {
         const res = await storeLocalUserData(user);
         if (res) {
           handleNav(user);
-          setLoading(false);
         }
       } else {
         alert("Password is incorrect");
@@ -67,6 +66,7 @@ const Auth = () => {
     } else {
       alert("Please fill in the form");
     }
+    setLoading(false);
   };
 
   const handleNav = (user) => {
