@@ -104,7 +104,6 @@ const Auth = () => {
             user.phoneNum = phoneNum;
           }
           const _user = await storeUser(user);
-          console.log(_user);
           const result = await storeLocalUserData(_user);
           if (_user && result) {
             setLoading(false);
