@@ -8,7 +8,6 @@ const AdminUser = () => {
   const route = useRoute();
   const { id } = route.params;
   const [orderList, setOrderList] = React.useState([]);
-  const dummy_uid = "7tX5hojyfmQTeBbSbsMj";
   const [user, setUser] = React.useState(null);
 
   const navigation = useNavigation();
@@ -18,12 +17,12 @@ const AdminUser = () => {
   }, []);
 
   const fetchOrders = async () => {
-    const res = await getUserOrders(dummy_uid);
+    const res = await getUserOrders(id);
     setOrderList(res);
   };
 
   const fetchUserData = async () => {
-    const res = await getUserData(dummy_uid);
+    const res = await getUserData(id);
     if (res) {
       setUser(res);
     }
@@ -74,7 +73,7 @@ const AdminUser = () => {
               </HStack>
               <HStack>
                 <Text>Total: </Text>
-                <Text>{item.total}</Text>
+                <Text>${item.total}</Text>
               </HStack>
             </VStack>
             <Button onPress={() => itemPress(item)}>Details</Button>

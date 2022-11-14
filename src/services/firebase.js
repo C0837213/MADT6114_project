@@ -214,3 +214,6 @@ export const getCart = async () => {
 export const getOrder = async () => {
   return await getData(ORDER_KEY)
 }
+export const getAllOrders = async () => {
+  return await getData(ORDER_KEY);
+};
