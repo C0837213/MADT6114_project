@@ -5,43 +5,87 @@ import { useRoute } from "@react-navigation/native";
 import { HStack, Text, VStack, Image, Button } from "native-base";
 import moment from "moment";
 import { getDateString } from "../helpers/date";
-import { updateOrder } from "../services/firebase";
+import {
+  createNewOrder,
+  getProductById,
+  getUserOrderByOrderId,
+  updateOrder,
+} from "../services/firebase";
+import LoadingModal from "../components/LoadingModal";
 
 const AdminUserOrder = () => {
   const { params } = useRoute();
-
+  const [loading, setLoading] = React.useState(false);
   const user = params?.user;
+  //   console.log(params?.item);
+
   const [item, setItem] = React.useState(params?.item);
   //   console.log(new Date().getTime());
 
-  const handleChange = (index, isDec) => {
+  const handleChange = async (index, isDec) => {
     const _item = { ...item };
     const _items = _item.items;
 
     if (_items[index]) {
       const item = _items[index];
       if (isDec) {
-        if (item.qty > 0) {
-          item.qty = item.qty - 1;
+        if (item.quantity > 0) {
+          item.quantity = item.quantity - 1;
         }
       } else {
-        item.qty = item.qty + 1;
+        const prodInfo = await getProductById(_items[index].id);
+        const maxQty = prodInfo.quantity;
+        if (parseInt(maxQty) - (parseInt(item.quantity) + 1) > 0) {
+          item.quantity = item.quantity + 1;
+        }
       }
     }
     setItem(_item);
   };
 
+  const getOrder = async (id) => {
+    const order = await getUserOrderByOrderId(id);
+    if (order) {
+      setItem(order);
+      setLoading(false);
+    }
+  };
+
   const handleUpdate = async (item) => {
+    setLoading(true);
     const _item = { ...item };
     _item.updatedAt = new Date().getTime();
     const res = await updateOrder(_item);
-    if(res) {
-        
+    if (res) {
+      await getOrder(_item.id);
+    } else {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusUpdate = async (item, status) => {
+    const _item = { ...item };
+    if (status === "completed") {
+      if (item.status === "pending") {
+        _item.status = "completed";
+        await handleUpdate(_item);
+      }
+    } else if (status === "ready for shipment") {
+      if (_item.status === "completed") {
+        _item.status = "ready for shipment";
+        await handleUpdate(_item);
+      }
+    } else if (status === "shipped") {
+      if (_item.status === "ready for shipment") {
+        _item.status = "shipped";
+        await handleUpdate(_item);
+      }
     }
   };
 
   return (
     <View style={styles.container}>
+      {loading ? <LoadingModal /> : null}
       <FlatList
         ListFooterComponent={() => {
           return (
@@ -57,14 +101,24 @@ const AdminUserOrder = () => {
                   {item.items
                     .reduce((acc, curItem) => {
                       return (acc = acc +=
-                        parseInt(curItem.qty) * parseFloat(curItem.price));
+                        parseInt(curItem.quantity) * parseFloat(curItem.price));
                     }, 0)
                     .toFixed(2)}
                 </Text>
               </VStack>
-              <Button>Submit Update</Button>
-              <Button>Mark as completed</Button>
-              <Button>Mark as Ready for shipment</Button>
+              {item.status === "pending" && (
+                <Button onPress={() => handleUpdate(item)}>
+                  Submit Update
+                </Button>
+              )}
+              {item.status === "pending" && (
+                <Button onPress={() => handleStatusUpdate(item, "completed")}>
+                  Mark as completed
+                </Button>
+              )}
+              {item.status === "completed" && (
+                <Button>Mark as Ready for shipment</Button>
+              )}
               <Button>Mark as shipped</Button>
             </VStack>
           );
@@ -85,36 +139,38 @@ const AdminUserOrder = () => {
         ItemSeparatorComponent={() => (
           <View style={{ height: 1.5, backgroundColor: "lightgrey" }} />
         )}
-        data={item?.items}
+        data={item.items}
         keyExtractor={({ id }) => id}
-        renderItem={({ item, index }) => (
+        renderItem={({ item: _item, index }) => (
           <HStack space={8} paddingVertical={8}>
             <Image
-              src={item.image}
+              src={_item?.image}
               alt="image"
               style={{ width: 100, height: 100, borderRadius: 50 }}
             />
             <VStack justifyContent="center">
-              <Text>Name: {item.name}</Text>
-              <Text>Price: ${item.price}</Text>
+              <Text>Name: {_item?.name}</Text>
+              <Text>Price: ${_item?.price}</Text>
               <Text>
                 Sub-Total: $
-                {(parseInt(item.qty) * parseFloat(item.price)).toFixed(2)}
+                {(parseInt(_item?.quantity) * parseFloat(_item.price)).toFixed(
+                  2
+                )}
               </Text>
             </VStack>
             <View style={{ marginLeft: "auto" }} />
             <VStack justifyContent="center" alignItems={"center"}>
               <Text>Quantity</Text>
               <HStack justifyContent={"center"}>
-                <TouchableOpacity>
-                  <Text
-                    style={{ padding: 8 }}
-                    onPress={() => handleChange(index, true)}
-                  >
-                    -
-                  </Text>
+                <TouchableOpacity
+                  onPress={() => handleChange(index, true)}
+                  disabled={item.status !== "pending"}
+                >
+                  <Text style={{ padding: 8 }}>-</Text>
                 </TouchableOpacity>
-                <Text style={{ padding: 8, minWidth: 25 }}>{item.qty}</Text>
+                <Text style={{ padding: 8, minWidth: 25 }}>
+                  {_item.quantity}
+                </Text>
                 <TouchableOpacity onPress={() => handleChange(index, false)}>
                   <Text style={{ padding: 8 }}>+</Text>
                 </TouchableOpacity>

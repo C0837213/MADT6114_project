@@ -26,8 +26,8 @@ Admin user should be able to:
 •	add/remove/modify categories of products ✅
 •	add/remove/modify products ✅
 •	search for a customer information and view their past orders ✅
-•	modify a pending order of a customer
-•	modify the status of the order (pending/completed/ready for shipment/shipped)
+•	modify a pending order of a customer ✅
+•	modify the status of the order (pending/completed/ready for shipment/shipped) ✅
 •	check statistics of sales by category and by product (last week, last month, all time, etc)
 */
 

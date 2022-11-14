@@ -108,6 +108,20 @@ export const getUserOrders = async (uid) => {
   }
 };
 
+export const getProductById = async (id) => {
+  try {
+    const q = query(collection(db, PRO_KEY), where("id", "==", id));
+    const snap = await getDocs(q);
+    let item;
+    snap.forEach((doc) => {
+      item = { ...doc.data() };
+    });
+    return item;
+  } catch (error) {
+    console.error(`Error in getProductById- ${id}`, error);
+  }
+};
+
 export const getUserOrderByOrderId = async (id) => {
   try {
     const q = query(collection(db, ORDER_KEY), where("id", "==", id));
@@ -177,5 +191,9 @@ export const updateProd = async (item) => {
 };
 
 export const updateOrder = async (item) => {
-  return await updateData(PRO_KEY, item);
+  return await updateData(ORDER_KEY, item);
+};
+
+export const createNewOrder = async (item) => {
+  return await saveData(ORDER_KEY, item);
 };
