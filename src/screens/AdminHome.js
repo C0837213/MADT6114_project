@@ -67,14 +67,19 @@ const AdminHome = () => {
   const [orders, setOrders] = React.useState([]);
   const [ordersByCat, setOrderByCat] = React.useState([]);
   const [orderByProd, setOrderByProd] = React.useState([]);
-  const [catFilterType, setCatFilterType] = React.useState("all");
-  const [proFilterType, setProFilterType] = React.useState("all");
+  const [catFilterType, setCatFilterType] = React.useState("");
+  const [proFilterType, setProFilterType] = React.useState("");
 
   React.useEffect(() => {
     fetchAllOrders();
-    countByCat("all");
-    countByProduct("all");
   }, []);
+
+  React.useEffect(() => {
+    if (Array.isArray(orders) && orders.length > 0) {
+      setCatFilterType("all");
+      setProFilterType("all");
+    }
+  }, [orders]);
 
   React.useEffect(() => {
     countByCat(catFilterType);
@@ -88,7 +93,7 @@ const AdminHome = () => {
     const list = [...orders];
     const resultArr = [];
     let result = filterByTime(list, type);
-    if (result.length > 0) {
+    if (Array.isArray(result) && result.length > 0) {
       result = result.reduce((acc, curItem) => {
         if (!acc[curItem.name]) {
           acc[curItem.name] = 1 * parseInt(curItem.quantity);
@@ -108,7 +113,7 @@ const AdminHome = () => {
     const list = [...orders];
     const resultArr = [];
     let result = filterByTime(list, type);
-    if (result.length > 0) {
+    if (Array.isArray(result) && result.length > 0) {
       result = result.reduce((acc, curItem) => {
         if (!acc[curItem.catName]) {
           acc[curItem.catName] = 1;
@@ -136,6 +141,7 @@ const AdminHome = () => {
           });
         }
       });
+
       setOrders(orderItems);
     }
   };
