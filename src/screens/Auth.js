@@ -103,9 +103,9 @@ const Auth = () => {
             user.address = address;
             user.phoneNum = phoneNum;
           }
-          const fbResult = await storeUser(user);
-          const result = await storeLocalUserData(user);
-          if (fbResult && result) {
+          const _user = await storeUser(user);
+          const result = await storeLocalUserData(_user);
+          if (_user && result) {
             setLoading(false);
             resetScreen();
             handleNav(user);

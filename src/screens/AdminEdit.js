@@ -38,6 +38,7 @@ const AdminEditCat = () => {
     if (res) {
       await getCatList();
     }
+    setCatInput("");
   };
 
   const handleDel = async (item) => {
