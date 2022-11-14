@@ -17,10 +17,8 @@ const AdminUserOrder = () => {
   const { params } = useRoute();
   const [loading, setLoading] = React.useState(false);
   const user = params?.user;
-  //   console.log(params?.item);
 
   const [item, setItem] = React.useState(params?.item);
-  //   console.log(new Date().getTime());
 
   const handleChange = async (index, isDec) => {
     const _item = { ...item };
