@@ -197,3 +197,7 @@ export const updateOrder = async (item) => {
 export const createNewOrder = async (item) => {
   return await saveData(ORDER_KEY, item);
 };
+
+export const getAllOrders = async () => {
+  return await getData(ORDER_KEY);
+};

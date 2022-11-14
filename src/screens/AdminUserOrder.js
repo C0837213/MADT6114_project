@@ -53,6 +53,11 @@ const AdminUserOrder = () => {
     setLoading(true);
     const _item = { ...item };
     _item.updatedAt = new Date().getTime();
+    const total = item.items.reduce((acc, curItem) => {
+      return (acc = acc +=
+        parseInt(curItem.quantity) * parseFloat(curItem.price));
+    }, 0);
+    _item.total = total + "";
     const res = await updateOrder(_item);
     if (res) {
       await getOrder(_item.id);
@@ -110,14 +115,20 @@ const AdminUserOrder = () => {
                 </Button>
               )}
               {item.status === "pending" && (
-                <Button onPress={() => handleStatusUpdate(item, "completed")}>
+                <Button
+                  onPress={() => handleStatusUpdate(item, "ready for shipment")}
+                >
                   Mark as completed
                 </Button>
               )}
               {item.status === "completed" && (
-                <Button>Mark as Ready for shipment</Button>
+                <Button onPress={() => handleStatusUpdate(item, "completed")}>
+                  Mark as Ready for shipment
+                </Button>
               )}
-              <Button>Mark as shipped</Button>
+              {item.status === "ready for shipment" && (
+                <Button>Mark as shipped</Button>
+              )}
             </VStack>
           );
         }}

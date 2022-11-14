@@ -24,7 +24,7 @@ const AdminBottomTab = () => {
 
   return (
     <AdminTab.Navigator
-      initialRouteName="UsersList"
+      initialRouteName="Home"
       screenOptions={({ route }) => ({
         headerRight: () => {
           return (
