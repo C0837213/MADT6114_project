@@ -43,6 +43,7 @@ const AdminUserOrder = () => {
 
   const getOrder = async (id) => {
     const order = await getUserOrderByOrderId(id);
+    console.log(order);
     if (order) {
       setItem(order);
       setLoading(false);
@@ -71,17 +72,17 @@ const AdminUserOrder = () => {
     if (status === "completed") {
       if (item.status === "pending") {
         _item.status = "completed";
-        await handleUpdate(_item);
+        handleUpdate(_item);
       }
     } else if (status === "ready for shipment") {
       if (_item.status === "completed") {
         _item.status = "ready for shipment";
-        await handleUpdate(_item);
+        handleUpdate(_item);
       }
     } else if (status === "shipped") {
       if (_item.status === "ready for shipment") {
         _item.status = "shipped";
-        await handleUpdate(_item);
+        handleUpdate(_item);
       }
     }
   };
@@ -115,19 +116,21 @@ const AdminUserOrder = () => {
                 </Button>
               )}
               {item.status === "pending" && (
-                <Button
-                  onPress={() => handleStatusUpdate(item, "ready for shipment")}
-                >
+                <Button onPress={() => handleStatusUpdate(item, "completed")}>
                   Mark as completed
                 </Button>
               )}
               {item.status === "completed" && (
-                <Button onPress={() => handleStatusUpdate(item, "completed")}>
+                <Button
+                  onPress={() => handleStatusUpdate(item, "ready for shipment")}
+                >
                   Mark as Ready for shipment
                 </Button>
               )}
               {item.status === "ready for shipment" && (
-                <Button>Mark as shipped</Button>
+                <Button onPress={() => handleStatusUpdate(item, "shipped")}>
+                  Mark as shipped
+                </Button>
               )}
             </VStack>
           );
