@@ -157,7 +157,7 @@ const AdminHome = () => {
         data={ordersByCat}
         ListFooterComponent={() => (
           <>
-            <HStack space={4} justifyContent={"center"}>
+            <HStack space={4}>
               <Button onPress={() => setCatFilterType("lastWeek")}>
                 Last week
               </Button>
@@ -182,7 +182,7 @@ const AdminHome = () => {
               )}
               style={{ width: "90%", paddingVertical: 16 }}
               ListFooterComponent={() => (
-                <HStack space={4} justifyContent={"center"}>
+                <HStack space={4}>
                   <Button onPress={() => setProFilterType("lastWeek")}>
                     Last week
                   </Button>
