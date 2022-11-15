@@ -133,16 +133,14 @@ const AdminHome = () => {
     if (orders.length === 0) {
       const res = await getAllOrders();
       const orderItems = [];
-      res
-        .filter((item) => item.status !== "pending")
-        .forEach((item) => {
-          if (item.items.length > 0) {
-            item.items.forEach((_item) => {
-              const product = { ..._item, createdAt: item.createdAt };
-              orderItems.push(product);
-            });
-          }
-        });
+      res.forEach((item) => {
+        if (item.items.length > 0) {
+          item.items.forEach((_item) => {
+            const product = { ..._item, createdAt: item.createdAt };
+            orderItems.push(product);
+          });
+        }
+      });
 
       setOrders(orderItems);
     }
