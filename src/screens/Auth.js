@@ -62,9 +62,10 @@ const Auth = () => {
         }
       } else {
         alert("Password is incorrect");
+        setPassword("");
       }
     } else {
-      alert("Please fill in the form");
+      alert("Please fill in username and password");
     }
     setLoading(false);
   };
